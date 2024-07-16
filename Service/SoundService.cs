@@ -19,7 +19,7 @@ namespace EntryManagement.Service
                         int IsCount = 0;
                     Console.WriteLine("Press Enter to stop playback...");
 
-                    while (outputDevice.PlaybackState == PlaybackState.Playing && IsCount <= 10)
+                    while (outputDevice.PlaybackState == PlaybackState.Playing && IsCount <= 5)
                     {
                         Thread.Sleep(1000);
                         IsCount++;

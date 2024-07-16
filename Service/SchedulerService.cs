@@ -11,7 +11,7 @@ namespace EntryManagement.Service
    
     public class SchedulerService
     {
-        public async Task StartScheduler( int hour1 = 12  , int miute1 = 0 , int hour2 = 22 , int miute2 = 31)
+        public async Task StartScheduler( int hour1 = 12  , int miute1 = 0 , int hour2 = 21 , int miute2 = 55)
         {
             StdSchedulerFactory factory = new StdSchedulerFactory();
             var scheduler = await factory.GetScheduler();
@@ -74,7 +74,7 @@ namespace EntryManagement.Service
                     {
                         if ((entry.EntryCount % 2) != 0)
                         {
-                            mailService.SendEmail(entry.StudentName);
+                            mailService.SendEmail(entry.StudentName );
                             Console.WriteLine($"Student name: {entry.StudentName}");
                             Console.WriteLine($"Parent email: {entry.ParentEmail ?? "No information available"}"); // Handle when ParentEmail is null
                             Console.WriteLine($"Entry count: {entry.EntryCount}");

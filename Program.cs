@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Text;
+using System.Threading;
 using EntryManagement;
 using EntryManagement.AdminFunction;
 using EntryManagement.Menu;
@@ -18,7 +19,8 @@ namespace EntryManagement
         public static async Task Main(string[] args)
         {
 
-           
+         
+
             // Hiển thị tiếng việt
             Console.OutputEncoding = Encoding.UTF8;
 
@@ -55,7 +57,11 @@ namespace EntryManagement
                             {
                                 //Thao tác của admin
                                 case 1:
-                                     
+
+                                    int hour1 = 12, miute1 = 00, hour2 = 22, miute2 = 3;
+                                    SchedulerService service = new SchedulerService();
+                                    await service.StartScheduler(hour1, miute1, hour2, miute2);
+
                                     bool isCheckAdmin = true;
 
                                     while (isCheckAdmin)
@@ -350,28 +356,14 @@ namespace EntryManagement
                                                                     // Lọc theo thời gian
                                                                     case 2:
 
-                                                                        Console.WriteLine("Nhập ngày bắt đầu (yyyy/MM/dd): ");
-                                                                        DateTime startDate;
-                                                                        while (!DateTime.TryParseExact(Console.ReadLine(), "yyyy/MM/dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out startDate))
-                                                                        {
-                                                                            Console.WriteLine("Ngày không hợp lệ. Vui lòng nhập lại (yyyy/MM/dd): ");
-                                                                        }
-
-                                                                        Console.WriteLine("Nhập ngày kết thúc (yyyy/MM/dd): ");
-                                                                        DateTime endDate;
-                                                                        while (!DateTime.TryParseExact(Console.ReadLine(), "yyyy/MM/dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out endDate))
-                                                                        {
-                                                                            Console.WriteLine("Ngày không hợp lệ. Vui lòng nhập lại (yyyy/MM/dd): ");
-                                                                        }
-
-                                                                      
+                                                                        entryLaterManage.FilterByRangeTime();
                                                                         break;
 
                                                                     // Hiển thị tất cả
                                                                     case 3:
-                                                                     
-                                                                       
 
+                                                                        entryLaterManage.FilterStudentLater();
+                                                                       
                                                                         break;
 
                                                                     case 0:
@@ -390,16 +382,14 @@ namespace EntryManagement
                                                         //2.Quản lí ra vào -> 3.Điều chỉnh thời gian cảnh báo 
                                                         case 3:
 
-                                                            int hour1, miute1, hour2, miute2;
+                                                           
 
-                                                            AdjustTimeSchedule adjustTimeSchedule = new AdjustTimeSchedule();
-                                                            adjustTimeSchedule.AdjustTime(out hour1, out miute1, out hour2, out miute2);
-
-                                                            SchedulerService service = new SchedulerService();
-                                                            await service.StartScheduler(hour1, miute1, hour2, miute2);
+                                                            AdjustTimeSchedule adjustTimeSchedule = new AdjustTimeSchedule(service);
+                                                            adjustTimeSchedule.AdjustTime();
+                                                            
 
                                                             break;
-                                                       
+
 
                                                         default:
                                                             Console.WriteLine("Vui lòng nhập đúng lựa chọn!");
@@ -419,10 +409,11 @@ namespace EntryManagement
 
                                             case 0:
 
-                                                return;
+                                                break;
+                                               
                                               
                                         }
-                                        break;
+                                        
                                     }
                                     break;
 

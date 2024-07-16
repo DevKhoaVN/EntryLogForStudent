@@ -34,6 +34,7 @@ namespace EntryManagement.Service
             videoSource.NewFrame += new NewFrameEventHandler(VideoSource_NewFrame);
             videoSource.Start();
 
+
            
             Console.ReadLine();
 
@@ -73,7 +74,7 @@ namespace EntryManagement.Service
                                                          .FirstOrDefault();
 
                             // Check if there's a recent log within 1 minute
-                            if (entry != null && (DateTime.Now - entry.LogTime).TotalMinutes < 1)
+                            if (entry != null && (DateTime.Now - entry.LogTime).TotalSeconds < 5)
                             {
                                 return;
                             }
@@ -124,7 +125,7 @@ namespace EntryManagement.Service
         private static void RenderTable(EntryLogManagementContext context)
         {
             var table = new Table().Expand();
-            table.Title("Bảng ra vào");
+            table.Title("[yellow]Bảng ra vào[/]");
             table.AddColumn("ID");
             table.AddColumn("Học sinh");
             table.AddColumn("Lớp");
