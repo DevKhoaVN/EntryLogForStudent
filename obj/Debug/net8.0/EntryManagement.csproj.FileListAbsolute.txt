@@ -318,3 +318,4 @@ C:\Users\khoav\OneDrive\Máy tính\KamProject\Project\bin\Debug\net8.0\Spectre.C
 C:\Users\khoav\OneDrive\Máy tính\KamProject\Project\bin\Debug\net8.0\de\Spectre.Console.Cli.resources.dll
 C:\Users\khoav\OneDrive\Máy tính\KamProject\Project\bin\Debug\net8.0\fr\Spectre.Console.Cli.resources.dll
 C:\Users\khoav\OneDrive\Máy tính\KamProject\Project\bin\Debug\net8.0\sv\Spectre.Console.Cli.resources.dll
+C:\Users\khoav\OneDrive\Máy tính\KamProject\Project\obj\Debug\net8.0\EntryManagement.sourcelink.json

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("EntryManagement")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e3570f836dc704ff29ae5ca98e3cf4d15fbbecca")]
 [assembly: System.Reflection.AssemblyProductAttribute("EntryManagement")]
 [assembly: System.Reflection.AssemblyTitleAttribute("EntryManagement")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

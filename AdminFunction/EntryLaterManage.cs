@@ -20,8 +20,8 @@ namespace EntryManagement.AdminFunction
         {
             context = _context;
 
-            DateTime morningStartTime = new DateTime(today.Year, today.Month, today.Day, 7, 0, 0);
-            DateTime morningLateTime = morningStartTime.AddMinutes(30); // 7:30 AM
+            DateTime morningStartTime = new DateTime(today.Year, today.Month, today.Day, 20, 0, 0);
+            DateTime morningLateTime = morningStartTime.AddMinutes(59); // 7:30 AM
 
             DateTime afternoonStartTime = new DateTime(today.Year, today.Month, today.Day, 14, 0, 0);
             DateTime afternoonLateTime = afternoonStartTime.AddMinutes(30); // 2:30 PM
