@@ -82,42 +82,50 @@ namespace EntryManagement.AdminFunction
                 Console.WriteLine("ID không đúng định dạng!");
                 Console.Write("Nhập lại ID học sinh: ");
             }
-            var studentLog = context.EntryLogs.Where(e =>
-                          ((e.LogTime > morningStartTime && e.LogTime <= morningLateTime) ||
-                          (e.LogTime > afternoonStartTime && e.LogTime <= afternoonLateTime) & e.StudentId == id)
-                      ).Select(e => new
-                      {
-                          ID = e.StudentId,
-                          Name = e.Student.Name,
-                          Class = e.Student.Class,
-                          Status = e.Status,
-                          TimeLate = e.LogTime
-                      }).OrderByDescending(e => e.TimeLate).FirstOrDefault();
-          
-            if (studentLog != null)
+
+            try
             {
-                var table = new Table().Expand();
-                table.Title($"Thông tin học sinh {studentLog.Name}");
+                var studentLog = context.EntryLogs.Where(e =>
+                       ((e.LogTime > morningStartTime && e.LogTime <= morningLateTime) ||
+                       (e.LogTime > afternoonStartTime && e.LogTime <= afternoonLateTime) & e.StudentId == id)
+                   ).Select(e => new
+                   {
+                       ID = e.StudentId,
+                       Name = e.Student.Name,
+                       Class = e.Student.Class,
+                       Status = e.Status,
+                       TimeLate = e.LogTime
+                   }).OrderByDescending(e => e.TimeLate).FirstOrDefault();
 
-                table.AddColumn("ID");
-                table.AddColumn("Học sinh");
-                table.AddColumn("Lớp");
-                table.AddColumn("Thời gian");
-                table.AddColumn("Trạng thái");
+                if (studentLog != null)
+                {
+                    var table = new Table().Expand();
+                    table.Title($"Thông tin học sinh {studentLog.Name}");
 
-                table.AddRow($"{studentLog.ID}",
-                             $"{studentLog.Name}",
-                             $"{studentLog.Class}",
-                             $"{studentLog.Status}",
-                             $"{studentLog.TimeLate}"
-                             );
+                    table.AddColumn("ID");
+                    table.AddColumn("Học sinh");
+                    table.AddColumn("Lớp");
+                    table.AddColumn("Thời gian");
+                    table.AddColumn("Trạng thái");
 
-                AnsiConsole.Render(table);
-            }
-            else
+                    table.AddRow($"{studentLog.ID}",
+                                 $"{studentLog.Name}",
+                                 $"{studentLog.Class}",
+                                 $"{studentLog.Status}",
+                                 $"{studentLog.TimeLate}"
+                                 );
+
+                    AnsiConsole.Render(table);
+                }
+                else
+                {
+                    Console.WriteLine("Không tìm thấy bản ghi nào cho ID học sinh này.");
+                }
+            }catch(Exception ex)
             {
-                Console.WriteLine("Không tìm thấy bản ghi nào cho ID học sinh này.");
+                AnsiConsole.WriteLine("[red]Lỗi khi lọc dữ liệu theo id[/] :" + ex.InnerException.Message);
             }
+         
         }
 
         public void FilterByRangeTime()

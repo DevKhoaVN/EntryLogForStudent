@@ -36,11 +36,12 @@ namespace EntryManagement.Service
                     .PromptStyle("#DD5353")
                     .Secret());
 
-            
+            EnterUserID:
             var studentIdString = AnsiConsole.Ask<string>("Nhập [green] ID[/] học sinh:");
+            AnsiConsole.WriteLine();
 
             // Kiểm tra id nhập vào
-            if (int.TryParse(studentIdString, out int studentId))
+            if (int.TryParse(studentIdString, out int studentId) && studentId > 0)
             {
                 // Kiểm tra xem ID học sinh có tồn tại trong cơ sở dữ liệu hay không
                 var student = context.Students.FirstOrDefault(x => x.StudentId == studentId);
@@ -53,6 +54,7 @@ namespace EntryManagement.Service
                         UserName = userName,
                         Password = password,
                         RoleId = 2, // Đặt một UserRoleId mặc định , (  tài khoản Admin do lập trình viên cấp)
+                        StudentID = studentId
                     };
 
                     // Thêm và lưu vào database
@@ -60,21 +62,21 @@ namespace EntryManagement.Service
                     context.SaveChanges();
 
 
-                    AnsiConsole.MarkupLine("[red]Đăng ký thành công![/]");
+                    AnsiConsole.MarkupLine("[#00ff00]Đăng ký thành công![/]");
                     AnsiConsole.WriteLine();
                 }
                 else
                 {
                     AnsiConsole.MarkupLine("[red]Học sinh không tồn tại trong hệ thống.[/]");
                     AnsiConsole.WriteLine();
-                    goto EnterUserName;
+                    goto EnterUserID;
                 }
             }
             else
             {
                 AnsiConsole.MarkupLine("[red]ID không hợp lệ. Vui lòng nhập đúng ID học sinh![/]");
                 AnsiConsole.WriteLine();
-                goto EnterUserName;
+                goto EnterUserID;
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿using EntryManagement.Service;
 using Quartz.Impl;
+using Spectre.Console;
 using System;
 
 namespace EntryManagement.AdminFunction
@@ -15,11 +16,11 @@ namespace EntryManagement.AdminFunction
 
         public void AdjustTime()
         {
-            int hour1 = GetValidHour("Nhập giờ bạn muốn thay đổi (buổi sáng): ");
-            int minutes1 = GetValidMinute("Nhập phút bạn muốn thay đổi (buổi sáng): ");
+            int hour1 = GetValidHour("Nhập [green]giờ bạn muốn thay đổi (buổi sáng)[/]: ");
+            int minutes1 = GetValidMinute("Nhập [green]phút bạn muốn thay đổi (buổi sáng)[/]: ");
 
-            int hour2 = GetValidHour("Nhập giờ bạn muốn thay đổi (buổi chiều): ");
-            int minutes2 = GetValidMinute("Nhập phút bạn muốn thay đổi (buổi chiều): ");
+            int hour2 = GetValidHour("Nhập [green]giờ bạn muốn thay đổi (buổi chiều)[/]: ");
+            int minutes2 = GetValidMinute("Nhập [green]phút bạn muốn thay đổi (buổi chiều)[/]: ");
 
             // Dừng và khởi động lại scheduler với thời gian mới
              AdjustScheduler(hour1, minutes1, hour2, minutes2);
@@ -30,7 +31,7 @@ namespace EntryManagement.AdminFunction
             int hour;
             while (true)
             {
-                Console.Write(prompt);
+                AnsiConsole.Markup(prompt);
                 if (int.TryParse(Console.ReadLine(), out hour) && hour >= 0 && hour <= 23)
                 {
                     break;
@@ -45,7 +46,7 @@ namespace EntryManagement.AdminFunction
             int minute;
             while (true)
             {
-                Console.Write(prompt);
+                AnsiConsole.Markup(prompt);
                 if (int.TryParse(Console.ReadLine(), out minute) && minute >= 0 && minute <= 59)
                 {
                     break;
