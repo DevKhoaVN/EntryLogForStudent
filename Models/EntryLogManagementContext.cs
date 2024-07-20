@@ -6,14 +6,6 @@ namespace EntryManagement.Models;
 
 public partial class EntryLogManagementContext : DbContext
 {
-    public EntryLogManagementContext()
-    {
-    }
-
-    public EntryLogManagementContext(DbContextOptions<EntryLogManagementContext> options)
-        : base(options)
-    {
-    }
 
     public virtual DbSet<AbsentReport> AbsentReports { get; set; }
 
@@ -29,10 +21,16 @@ public partial class EntryLogManagementContext : DbContext
 
     public virtual DbSet<UserRole> UserRoles { get; set; }
 
+
+    // chuỗi kết nối tới database
     private string connect = "Data Source=DESKTOP-Q51CKKR\\SQLEXPRESS01;Initial Catalog=EntryLogManagement;Integrated Security=True;Trust Server Certificate=True";
+
+    // thực hiện cấu hình
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseSqlServer(connect);
+
+        // tự động load
         optionsBuilder.UseLazyLoadingProxies();
 
     }

@@ -1,11 +1,10 @@
 ﻿using System.Globalization;
+using System.Numerics;
 using System.Text;
 using System.Threading;
 using EntryManagement;
 using EntryManagement.AdminFunction;
 using EntryManagement.Menu;
-using EntryManagement.Menu.Admin;
-using EntryManagement.Menu.Parent;
 using EntryManagement.Models;
 using EntryManagement.ParentFunction;
 using EntryManagement.Service;
@@ -43,12 +42,17 @@ namespace EntryManagement
                         register.HandleRegister();
 
                         break;
+
                     // Xử lí đăng nhập
                     case 2:
-                        //
-                        // xác định vai trò 
+
+
+                        // xác định vai trò của user
                         int role = 0;
+
+                        // xác định ID học sinh của của user
                         int? StudentID = 0;
+
                         Login login = new Login(context);
 
                         if (login.HandleLogin(out role , out StudentID))
@@ -74,7 +78,7 @@ namespace EntryManagement
                                                 bool isCheckAdmin_1 = true;
                                                 while (isCheckAdmin_1)
                                                 {
-                                                    switch (MenuAdmin1.AdminStudentManagement())
+                                                    switch (MenuAdmin.AdminStudentManagement1())
                                                     {
                                                         //  1.Quản lí học sinh -> 1.Thêm xửa xóa
                                                         case 1:
@@ -84,7 +88,7 @@ namespace EntryManagement
                                                             bool isCheckAdmin_1_1 = true;
                                                             while (isCheckAdmin_1_1)
                                                             {
-                                                                switch (MenuAdmin1_1.AdminStudentManagement_1())
+                                                                switch (MenuAdmin.AdminStudentManagement1_1())
                                                                 {
                                                                     // Thêm
                                                                     case 1:
@@ -103,6 +107,7 @@ namespace EntryManagement
 
                                                                     case 0:
 
+                                                                        // Quay lại trang trước đó
                                                                         isCheckAdmin_1_1 = false;
                                                                         break;
 
@@ -120,38 +125,41 @@ namespace EntryManagement
                                                             bool isCheckAdmin_1_2 = true;
                                                             while (isCheckAdmin_1_2)
                                                             {
-                                                                switch (MenuAdmin1_2.AdminStudentManagement_2())
+                                                                switch (MenuAdmin.AdminStudentManagement1_2())
                                                                 {
                                                                     // Học theo id học sinh
                                                                     case 1:
-                                                                        await absentReportManage.DisplayReportById();
+                                                                         absentReportManage.DisplayReportById();
                                                                         break;
 
                                                                     // Lọc theo thời gian
                                                                     case 2:
 
-                                                                        Console.WriteLine("Nhập ngày bắt đầu (yyyy/MM/dd): ");
+                                                                        AnsiConsole.Markup("Nhập [green]ngày bắt đầu (yyyy/MM/dd)[/]: ");
                                                                         DateTime startDate;
                                                                         while (!DateTime.TryParseExact(Console.ReadLine(), "yyyy/MM/dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out startDate))
                                                                         {
-                                                                            Console.WriteLine("Ngày không hợp lệ. Vui lòng nhập lại (yyyy/MM/dd): ");
+                                                                            AnsiConsole.MarkupLine("[red]Ngày không hợp lệ[/]. Vui lòng nhập lại (yyyy/MM/dd): ");
+                                                                            AnsiConsole.Markup("Nhập [green]ngày bắt đầu (yyyy/MM/dd)[/]: ");
                                                                         }
 
-                                                                        Console.WriteLine("Nhập ngày kết thúc (yyyy/MM/dd): ");
+                                                                        AnsiConsole.Markup("Nhập [green]ngày kết thúc (yyyy/MM/dd)[/]: ");
                                                                         DateTime endDate;
                                                                         while (!DateTime.TryParseExact(Console.ReadLine(), "yyyy/MM/dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out endDate))
                                                                         {
-                                                                            Console.WriteLine("Ngày không hợp lệ. Vui lòng nhập lại (yyyy/MM/dd): ");
+                                                                            AnsiConsole.MarkupLine("[red]Ngày không hợp lệ[/]. Vui lòng nhập lại (yyyy/MM/dd): ");
+                                                                            AnsiConsole.Markup("Nhập [green]ngày kết thúc (yyyy/MM/dd)[/]: ");
                                                                         }
 
-                                                                        await absentReportManage.DisplayReportsByTime(startDate, endDate);
+                                                                        absentReportManage.DisplayReportsByTime(startDate, endDate);
                                                                         break;
 
                                                                     // Hiển thị tất cả
                                                                     case 3:
-                                                                        await absentReportManage.DisplayAllReports();
+                                                                       absentReportManage.DisplayAllReports();
                                                                         break;
 
+                                                                    // Quay lại trang trước đó
                                                                     case 0:
 
                                                                         isCheckAdmin_1_2 = false;
@@ -171,9 +179,9 @@ namespace EntryManagement
                                                             bool isCheckAdmin_1_3 = true;
                                                             while (isCheckAdmin_1_3)
                                                             {
-                                                                switch (MenuAdmin1_3.AdminStudentManagement_3())
+                                                                switch (MenuAdmin.AdminStudentManagement1_3())
                                                                 {
-                                                                    // Học theo id học sinh
+                                                                    // lọc theo id học sinh
                                                                     case 1:
 
                                                                         alertManage.FindAlertsByStudentId();
@@ -204,6 +212,7 @@ namespace EntryManagement
                                                                         alertManage.DisplayAllAlerts();
                                                                         break;
 
+                                                                    // Quay lại trang trước đó
                                                                     case 0:
 
                                                                         isCheckAdmin_1_3 = false;
@@ -222,9 +231,9 @@ namespace EntryManagement
                                                             bool isCheckAdmin_1_4 = true;
                                                             while (isCheckAdmin_1_4)
                                                             {
-                                                                switch (MenuAdmin1_4.AdminStudentManagement_4())
+                                                                switch (MenuAdmin.AdminStudentManagement1_4())
                                                                 {
-                                                                    // Học theo id học sinh
+                                                                    // Lọc theo id học sinh
                                                                     case 1:
 
                                                                         studentInformationManage.FilterByStudentId();
@@ -232,20 +241,22 @@ namespace EntryManagement
 
                                                                     // Lọc theo thời gian
                                                                     case 2:
-
-                                                                        Console.WriteLine("Nhập ngày bắt đầu (yyyy/MM/dd): ");
+                                                                        AnsiConsole.Markup("Nhập [green]ngày bắt đầu (yyyy/MM/dd)[/]: ");
                                                                         DateTime startDate;
                                                                         while (!DateTime.TryParseExact(Console.ReadLine(), "yyyy/MM/dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out startDate))
                                                                         {
-                                                                            Console.WriteLine("Ngày không hợp lệ. Vui lòng nhập lại (yyyy/MM/dd): ");
+                                                                            AnsiConsole.MarkupLine("[red]Ngày không hợp lệ[/]. Vui lòng nhập lại (yyyy/MM/dd): ");
+                                                                            AnsiConsole.Markup("Nhập [green]ngày bắt đầu (yyyy/MM/dd)[/]: ");
                                                                         }
 
-                                                                        Console.WriteLine("Nhập ngày kết thúc (yyyy/MM/dd): ");
+                                                                        AnsiConsole.Markup("Nhập [green]ngày kết thúc (yyyy/MM/dd)[/]: ");
                                                                         DateTime endDate;
                                                                         while (!DateTime.TryParseExact(Console.ReadLine(), "yyyy/MM/dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out endDate))
                                                                         {
-                                                                            Console.WriteLine("Ngày không hợp lệ. Vui lòng nhập lại (yyyy/MM/dd): ");
+                                                                            AnsiConsole.MarkupLine("[red]Ngày không hợp lệ[/]. Vui lòng nhập lại (yyyy/MM/dd): ");
+                                                                            AnsiConsole.Markup("Nhập [green]ngày kết thúc (yyyy/MM/dd)[/]: ");
                                                                         }
+
                                                                         studentInformationManage.FilterByTimeRange(startDate, endDate);
                                                                         break;
 
@@ -254,6 +265,7 @@ namespace EntryManagement
                                                                         studentInformationManage.DisplayStudentsWithParentsInfo();
                                                                         break;
 
+                                                                    // Quay lại trang trước đó
                                                                     case 0:
 
                                                                         isCheckAdmin_1_4 = false;
@@ -285,7 +297,7 @@ namespace EntryManagement
                                                 bool isCheckEntry = true;
                                                 while (isCheckEntry)
                                                 {
-                                                    switch (MenuAdmin2.AdminEntryLogManagement())
+                                                    switch (MenuAdmin.AdminEntryLogManagement2())
                                                     {
                                                         // 2.Quản lí ra vào -> 1.Xem bảng học sinh ra vào
                                                         case 1:
@@ -293,7 +305,7 @@ namespace EntryManagement
                                                             bool isCheckEntry_1 = true;
                                                             while (isCheckEntry_1)
                                                             {
-                                                                switch (AdminMenu2_1.AdminEntryLogManagement_1())
+                                                                switch (MenuAdmin.AdminEntryLogManagement2_1())
                                                                 {
                                                                     // Học theo id học sinh
                                                                     case 1:
@@ -303,29 +315,32 @@ namespace EntryManagement
 
                                                                     // Lọc theo thời gian
                                                                     case 2:
-
-                                                                        Console.WriteLine("Nhập ngày bắt đầu (yyyy/MM/dd): ");
+                                                                        AnsiConsole.Markup("Nhập [green]ngày bắt đầu (yyyy/MM/dd)[/]: ");
                                                                         DateTime startDate;
                                                                         while (!DateTime.TryParseExact(Console.ReadLine(), "yyyy/MM/dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out startDate))
                                                                         {
-                                                                            Console.WriteLine("Ngày không hợp lệ. Vui lòng nhập lại (yyyy/MM/dd): ");
+                                                                            AnsiConsole.MarkupLine("[red]Ngày không hợp lệ[/]. Vui lòng nhập lại (yyyy/MM/dd): ");
+                                                                            AnsiConsole.Markup("Nhập [green]ngày bắt đầu (yyyy/MM/dd)[/]: ");
                                                                         }
 
-                                                                        Console.WriteLine("Nhập ngày kết thúc (yyyy/MM/dd): ");
+                                                                        AnsiConsole.Markup("Nhập [green]ngày kết thúc (yyyy/MM/dd)[/]: ");
                                                                         DateTime endDate;
                                                                         while (!DateTime.TryParseExact(Console.ReadLine(), "yyyy/MM/dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out endDate))
                                                                         {
-                                                                            Console.WriteLine("Ngày không hợp lệ. Vui lòng nhập lại (yyyy/MM/dd): ");
+                                                                            AnsiConsole.MarkupLine("[red]Ngày không hợp lệ[/]. Vui lòng nhập lại (yyyy/MM/dd): ");
+                                                                            AnsiConsole.Markup("Nhập [green]ngày kết thúc (yyyy/MM/dd)[/]: ");
                                                                         }
+
                                                                         entryManage.DisplayEntryLogsByTimeRange(startDate, endDate);
                                                                         break;
 
                                                                     // Hiển thị tất cả
                                                                     case 3:
 
-                                                                      await entryManage.DisplayAllEntryLogs();
+                                                                       entryManage.DisplayAllEntryLogs();
                                                                         break;
 
+                                                                    // Quay lại trang trước đó
                                                                     case 0:
 
                                                                         isCheckEntry_1 = false;
@@ -346,7 +361,7 @@ namespace EntryManagement
                                                             bool isCheckEntry_2 = true;
                                                             while (isCheckEntry_2)
                                                             {
-                                                                switch (MenuAdmin2_2.AdminEntryLogManagement_2())
+                                                                switch (MenuAdmin.AdminEntryLogManagement2_2())
                                                                 {
                                                                     // Học theo id học sinh
                                                                     case 1:
@@ -366,6 +381,7 @@ namespace EntryManagement
                                                                        
                                                                         break;
 
+                                                                    // Quay lại trang trước đó
                                                                     case 0:
 
                                                                         isCheckEntry_2 = false;
@@ -382,12 +398,15 @@ namespace EntryManagement
                                                         //2.Quản lí ra vào -> 3.Điều chỉnh thời gian cảnh báo 
                                                         case 3:
 
-                                                           
-
                                                             AdjustTimeSchedule adjustTimeSchedule = new AdjustTimeSchedule(service);
                                                             adjustTimeSchedule.AdjustTime();
                                                             
 
+                                                            break;
+
+                                                        // Quay lại trang trước đó
+                                                        case 0:
+                                                            isCheckEntry = false;
                                                             break;
 
 
@@ -396,11 +415,11 @@ namespace EntryManagement
                                                             break;
 
                                                     }
-
+                                                   
                                                 }
                                                 break;
 
-                                            // Thực hiện 3.Thực hiện kiểm tra ra vào ( con , cha) -----------------------
+                                            // Thực hiện 3.Thực hiện kiểm tra ra vào
                                             case 3:
 
                                                 Camera camera = new Camera();
@@ -409,9 +428,7 @@ namespace EntryManagement
 
                                             case 0:
 
-                                                break;
-                                               
-                                              
+                                                return ;
                                         }
                                         
                                     }
@@ -433,24 +450,27 @@ namespace EntryManagement
                                                 bool isCheckParent1 = true;
                                                 while (isCheckParent1)
                                                 {
-                                                    switch (ParentMenu1.ParentEntryLog())
+                                                    switch (MenuParent.ParentEntryLog())
                                                     {
                                                         // Lọc theo thời gian
                                                         case 1:
 
-                                                            Console.WriteLine("Nhập ngày bắt đầu (yyyy/MM/dd): ");
+                                                            AnsiConsole.Markup("Nhập [green]ngày bắt đầu (yyyy/MM/dd)[/]: ");
                                                             DateTime startDate;
                                                             while (!DateTime.TryParseExact(Console.ReadLine(), "yyyy/MM/dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out startDate))
                                                             {
-                                                                Console.WriteLine("Ngày không hợp lệ. Vui lòng nhập lại (yyyy/MM/dd): ");
+                                                                AnsiConsole.MarkupLine("[red]Ngày không hợp lệ[/]. Vui lòng nhập lại (yyyy/MM/dd): ");
+                                                                AnsiConsole.Markup("Nhập [green]ngày bắt đầu (yyyy/MM/dd)[/]: ");
                                                             }
 
-                                                            Console.WriteLine("Nhập ngày kết thúc (yyyy/MM/dd): ");
+                                                            AnsiConsole.Markup("Nhập [green]ngày kết thúc (yyyy/MM/dd)[/]: ");
                                                             DateTime endDate;
                                                             while (!DateTime.TryParseExact(Console.ReadLine(), "yyyy/MM/dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out endDate))
                                                             {
-                                                                Console.WriteLine("Ngày không hợp lệ. Vui lòng nhập lại (yyyy/MM/dd): ");
+                                                                AnsiConsole.MarkupLine("[red]Ngày không hợp lệ[/]. Vui lòng nhập lại (yyyy/MM/dd): ");
+                                                                AnsiConsole.Markup("Nhập [green]ngày kết thúc (yyyy/MM/dd)[/]: ");
                                                             }
+
                                                             entryLogStudentOfParent.DisplayEntryLogsByTimeRange(startDate, endDate);
                                                             break;
 
@@ -479,7 +499,7 @@ namespace EntryManagement
                                                 bool isCheckParent2 = true;
                                                 while (isCheckParent2)
                                                 {
-                                                    switch (ParentMenu2.ParentAbsentReport())
+                                                    switch (MenuParent.ParentAbsentReport())
                                                     {
                                                         // Gửi báo cáo vắng học
                                                         case 1:
@@ -542,6 +562,8 @@ namespace EntryManagement
         }
     }
 }
+
+// 
 // "Data Source=DESKTOP-Q51CKKR\\SQLEXPRESS01;Initial Catalog=EntryLogManagement;Integrated Security=True;Trust Server Certificate=True"
 
 

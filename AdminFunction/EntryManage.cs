@@ -12,10 +12,12 @@ namespace EntryManagement.AdminFunction
             context = _context;
         }
 
-        public async Task DisplayAllEntryLogs()
+        // Hiển thị tất cả các bản ghi ra vào
+        public void DisplayAllEntryLogs()
         {
             try
             {
+                // Truy vấn
                 var entryLogs = context.EntryLogs
                     .Select(e => new
                     {
@@ -28,59 +30,63 @@ namespace EntryManagement.AdminFunction
                     .OrderByDescending(e => e.LogTime)
                     .ToList();
 
+                // Kiểm tra xem có bản ghi nào không
                 if (entryLogs.Any())
                 {
-                    await AnsiConsole.Live(new Table().Expand())
-                        .StartAsync(async ctx =>
-                        {
-                            var table = new Table().Expand();
-                            table.Title("[Red]Bảng ra vào[/]").HeavyEdgeBorder().BorderColor(Color.Red);
-                            table.AddColumn("[bold yellow]ID học sinh[/]");
-                            table.AddColumn("[bold yellow]Tên học sinh[/]");
-                            table.AddColumn("[bold yellow]Lớp[/]");
-                            table.AddColumn("[bold yellow]Thời gian bản ghi[/]");
-                            table.AddColumn("[bold yellow]Trạng thái[/]");
-                        
-                            
-                            foreach (var log in entryLogs)
-                            {
-                                table.AddRow(
-                                    $"[green]{log.StudentId}[/]",
-                                    $"[blue]{log.StudentName}[/]",
-                                    $"[cyan]{log.StudentClass}[/]",
-                                    $"[magenta]{log.LogTime}[/]",
-                                    $"[red]{log.Status}[/]"
-                                );
+                    // Tạo bảng và thêm các cột
+                    var table = new Table().Expand();
+                    table.Title("[#ffff00]Bảng ra vào[/]").HeavyEdgeBorder();
+                    table.AddColumn("ID học sinh");
+                    table.AddColumn("Tên học sinh");
+                    table.AddColumn("Lớp");
+                    table.AddColumn("Thời gian bản ghi");
+                    table.AddColumn("Trạng thái");
 
-                                ctx.UpdateTarget(table);
-                                ctx.Refresh();
-                             
-                            }
-                        });
+                    // Thêm các hàng vào bảng
+                    foreach (var log in entryLogs)
+                    {
+                        table.AddRow(
+                            $"{log.StudentId}",
+                            $"{log.StudentName}",
+                            $"{log.StudentClass}",
+                            $"{log.LogTime:yyyy-MM-dd HH:mm:ss}",
+                            $"{log.Status}"
+                        );
+                    }
+
+                    // Hiển thị bảng
+                    AnsiConsole.Render(table);
+                    AnsiConsole.WriteLine();
                 }
                 else
                 {
                     AnsiConsole.MarkupLine("[red]Không có bản ghi ra vào nào trong cơ sở dữ liệu.[/]");
+                    AnsiConsole.WriteLine();
                 }
             }
             catch (Exception ex)
             {
                 AnsiConsole.MarkupLine($"[red]Lỗi khi hiển thị các bản ghi ra vào: {ex.Message}[/]");
+                AnsiConsole.WriteLine();
             }
         }
 
 
-        public async Task DisplayEntryLogsByStudentId()
+        public void DisplayEntryLogsByStudentId()
         {
-            Console.Write("Nhập ID học sinh: ");
+            AnsiConsole.Markup("Nhập [green]ID học sinh[/]: ");
             int studentId;
-            while (!int.TryParse(Console.ReadLine(), out studentId))
+
+            // Kiểm tra đầu vào ID học sinh
+            while (!int.TryParse(Console.ReadLine(), out studentId) || studentId < 0)
             {
-                Console.WriteLine("ID không đúng định dạng!");
+                AnsiConsole.MarkupLine("[red]ID không đúng định dạng! Vui lòng nhập lại.[/]");
+                AnsiConsole.Markup("Nhập [green]ID học sinh[/]: ");
             }
 
             try
             {
+                // Truy vấn
                 var entryLogs = context.EntryLogs
                     .Where(e => e.StudentId == studentId)
                     .Select(e => new
@@ -94,56 +100,58 @@ namespace EntryManagement.AdminFunction
                     .OrderByDescending(e => e.LogTime)
                     .ToList();
 
+                // Kiểm tra xem có bản ghi nào không
                 if (entryLogs.Any())
                 {
-                    await AnsiConsole.Live(new Table().Expand())
-                        .StartAsync(async ctx =>
-                        {
-                            var table = new Table().Expand();
-                            table.Title($"[Red]Danh sách các bản ghi ra vào cho học sinh có ID {studentId}[/]").HeavyEdgeBorder().BorderColor(Color.Red);
-                            table.AddColumn("[bold yellow]ID[/]");
-                            table.AddColumn("[bold yellow]Tên học sinh[/]");
-                            table.AddColumn("[bold yellow]Lớp[/]");
-                            table.AddColumn("[bold yellow]Thời gian bản ghi[/]");
-                            table.AddColumn("[bold yellow]Trạng thái[/]");
+                    // Tạo bảng và thêm các cột
+                    var table = new Table().Expand();
+                    table.Title($"[#ffff00]Danh sách các bản ghi ra vào cho học sinh có ID {studentId}[/]").HeavyEdgeBorder();
+                    table.AddColumn("ID học sinh");
+                    table.AddColumn("Tên học sinh");
+                    table.AddColumn("Lớp");
+                    table.AddColumn("Thời gian bản ghi");
+                    table.AddColumn("Trạng thái");
 
-                            foreach (var log in entryLogs)
-                            {
-                                table.AddRow(
-                                    $"[green]{log.StudentId}[/]",
-                                    $"[blue]{log.StudentName}[/]",
-                                    $"[cyan]{log.StudentClass}[/]",
-                                    $"[magenta]{log.LogTime:yyyy-MM-dd HH:mm:ss}[/]",
-                                    $"[red]{log.Status}[/]"
-                                );
+                    // Thêm các hàng vào bảng
+                    foreach (var log in entryLogs)
+                    {
+                        table.AddRow(
+                            $"{log.StudentId}",
+                            $"{log.StudentName}",
+                            $"{log.StudentClass}",
+                            $"{log.LogTime:yyyy-MM-dd HH:mm:ss}",
+                            $"{log.Status}"
+                        );
+                    }
 
-                                ctx.UpdateTarget(table);
-                                ctx.Refresh();
-                                
-                            }
-                        });
+                    // Hiển thị bảng
+                    AnsiConsole.Render(table);
+                    AnsiConsole.WriteLine();
                 }
                 else
                 {
-                    AnsiConsole.MarkupLine($"[yellow]Không có bản ghi ra vào nào cho học sinh có ID {studentId} trong cơ sở dữ liệu.[/]");
+                    AnsiConsole.MarkupLine($"[red]Không có bản ghi ra vào nào cho học sinh có ID {studentId} trong cơ sở dữ liệu.[/]");
+                    AnsiConsole.WriteLine();
                 }
             }
             catch (Exception ex)
             {
                 AnsiConsole.MarkupLine($"[red]Lỗi khi hiển thị bản ghi ra vào theo ID học sinh: {ex.Message}[/]");
+                AnsiConsole.WriteLine();
             }
         }
 
 
-
-
-        public async Task DisplayEntryLogsByTimeRange(DateTime timeStart, DateTime timeEnd)
+        // Hiển thị các bản ghi ra vào trong một khoảng thời gian
+        public void DisplayEntryLogsByTimeRange(DateTime timeStart, DateTime timeEnd)
         {
+            // Chuyển đổi thời gian bắt đầu và kết thúc thành ngày đầy đủ
             timeStart = timeStart.Date;
             timeEnd = timeEnd.Date.AddDays(1).AddSeconds(-1);
 
             try
             {
+                // Truy vấn
                 var entryLogs = context.EntryLogs
                     .Where(e => e.LogTime >= timeStart && e.LogTime <= timeEnd)
                     .Select(e => new
@@ -156,46 +164,46 @@ namespace EntryManagement.AdminFunction
                     })
                     .ToList();
 
+                // Kiểm tra xem có bản ghi nào không
                 if (entryLogs.Any())
                 {
-                    await AnsiConsole.Live(new Table().Expand())
-                        .StartAsync(async ctx =>
-                        {
-                            var table = new Table().Expand();
-                            table.Title($"[Red]Danh sách các bản ghi ra vào từ {timeStart:yyyy-MM-dd} đến {timeEnd:yyyy-MM-dd}[/]").HeavyEdgeBorder().BorderColor(Color.Red);
-                            table.AddColumn("[bold yellow]ID[/]");
-                            table.AddColumn("[bold yellow]Tên học sinh[/]");
-                            table.AddColumn("[bold yellow]Lớp[/]");
-                            table.AddColumn("[bold yellow]Thời gian bản ghi[/]");
-                            table.AddColumn("[bold yellow]Trạng thái[/]");
+                    // Tạo bảng và thêm các cột
+                    var table = new Table().Expand();
+                    table.Title($"[yellow]Danh sách các bản ghi ra vào từ {timeStart:yyyy-MM-dd} đến {timeEnd:yyyy-MM-dd}[/]").HeavyEdgeBorder();
+                    table.AddColumn("ID học sinh");
+                    table.AddColumn("Tên học sinh");
+                    table.AddColumn("Lớp");
+                    table.AddColumn("Thời gian bản ghi");
+                    table.AddColumn("Trạng thái");
 
-                            foreach (var log in entryLogs)
-                            {
-                                table.AddRow(
-                                    $"[green]{log.StudentId}[/]",
-                                    $"[blue]{log.StudentName}[/]",
-                                    $"[cyan]{log.StudentClass}[/]",
-                                    $"[magenta]{log.LogTime:yyyy-MM-dd HH:mm:ss}[/]",
-                                    $"[red]{log.Status}[/]"
-                                );
+                    // Thêm các hàng vào bảng
+                    foreach (var log in entryLogs)
+                    {
+                        table.AddRow(
+                            $"{log.StudentId}",
+                            $"{log.StudentName}",
+                            $"{log.StudentClass}",
+                            $"{log.LogTime:yyyy-MM-dd HH:mm:ss}",
+                            $"{log.Status}"
+                        );
+                    }
 
-                                ctx.UpdateTarget(table);
-                                ctx.Refresh();
-                                
-                            }
-                        });
+                    // Hiển thị bảng
+                    AnsiConsole.Render(table);
+                    AnsiConsole.WriteLine();
                 }
                 else
                 {
-                    AnsiConsole.MarkupLine($"[yellow]Không có bản ghi ra vào nào trong khoảng thời gian từ {timeStart:yyyy-MM-dd} đến {timeEnd:yyyy-MM-dd}.[/]");
+                    AnsiConsole.MarkupLine($"[red]Không có bản ghi ra vào nào trong khoảng thời gian từ {timeStart:yyyy-MM-dd} đến {timeEnd:yyyy-MM-dd}.[/]");
+                    AnsiConsole.WriteLine();
                 }
             }
             catch (Exception ex)
             {
                 AnsiConsole.MarkupLine($"[red]Lỗi khi hiển thị bản ghi ra vào theo thời gian: {ex.Message}[/]");
+                AnsiConsole.WriteLine();
             }
         }
-
 
 
     }
