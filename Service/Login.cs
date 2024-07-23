@@ -50,7 +50,7 @@ namespace EntryManagement.Service
                 if (user != null && user.Password == password)
                 {
                     userRole = user.RoleId;
-                    StudentID = user.StudentID;
+                    StudentID = user.StudentId;
 
                     AnsiConsole.MarkupLine("[#00ff00]Bạn đã đăng nhập thành công![/]");
                     AnsiConsole.WriteLine();

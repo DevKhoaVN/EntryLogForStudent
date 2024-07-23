@@ -54,7 +54,7 @@ namespace EntryManagement.Service
                         UserName = userName,
                         Password = password,
                         RoleId = 2, // Đặt một UserRoleId mặc định , (  tài khoản Admin do lập trình viên cấp)
-                        StudentID = studentId
+                        StudentId = studentId
                     };
 
                     // Thêm và lưu vào database

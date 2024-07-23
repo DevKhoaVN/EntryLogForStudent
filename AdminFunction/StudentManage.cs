@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using System.Text.RegularExpressions;
 using EntryManagement.Models; // Import các namespace cần thiết
 using Spectre.Console;
 
@@ -23,8 +24,16 @@ namespace EntryManagement.AdminFunction
 
             // Nhập số điện thoại từ người dùng và validate nó phải lớn hơn 0
             parent.Phone = AnsiConsole.Prompt(
-                new TextPrompt<int>("Nhập [green]số điện thoại phụ huynh[/]: ")
-                    .Validate(phone => phone > 0 ? ValidationResult.Success() : ValidationResult.Error("[red]Số điện thoại không hợp lệ[/].")));
+               new TextPrompt<string>("Nhập [green]số điện thoại học sinh[/]: ")
+          .Validate(phone =>
+          {
+              // Define a regex pattern for validating phone numbers
+              string pattern = @"^[1-9]\d{8,12}$"; // Adjust the pattern as needed
+              return Regex.IsMatch(phone, pattern) ?
+                  ValidationResult.Success() :
+                  ValidationResult.Error("[red]Số điện thoại không hợp lệ. Vui lòng nhập lại.[/]");
+          }));
+
 
             // Nhập Email từ người dùng và validate là phải kết thúc bằng @gmail.com
             parent.Email = AnsiConsole.Prompt(
@@ -61,8 +70,16 @@ namespace EntryManagement.AdminFunction
 
             // Nhập số điện thoại từ người dùng và validate nó phải lớn hơn 0
             student.Phone = AnsiConsole.Prompt(
-                new TextPrompt<int>("Nhập [green]số điện thoại học sinh[/]: ")
-                    .Validate(phone => phone > 0 ? ValidationResult.Success() : ValidationResult.Error("[red]Số điện thoại không hợp lệ[/].")));
+                new TextPrompt<string>("Nhập [green]số điện thoại học sinh[/]: ")
+                    .Validate(phone =>
+                    {
+                        // Define a regex pattern for validating phone numbers
+                        string pattern = @"^[1-9]\d{8,12}$"; // Adjust the pattern as needed
+                        return Regex.IsMatch(phone, pattern) ?
+                            ValidationResult.Success() :
+                            ValidationResult.Error("[red]Số điện thoại không hợp lệ[/]");
+                    }));
+
 
             return student; // Trả về đối tượng Student đã nhập
         }
@@ -173,7 +190,7 @@ namespace EntryManagement.AdminFunction
 
             // Nhập số điện thoại mới cho phụ huynh (nếu muốn thay đổi)
             string newPhoneString = AnsiConsole.Ask<string>("Nhập [green]số điện thoại phụ huynh mới (bỏ trống nếu không muốn thay đổi)[/]: ", parent.Phone.ToString());
-            if (!string.IsNullOrEmpty(newPhoneString) && int.TryParse(newPhoneString, out int newPhone) && newPhone > 0) parent.Phone = newPhone;
+          
 
             // Nhập Email mới cho phụ huynh (nếu muốn thay đổi)
             string newEmail = AnsiConsole.Ask<string>("Nhập[green] Email phụ huynh mới (bỏ trống nếu không muốn thay đổi, phải là @gmail.com)[/]: ", parent.Email);
@@ -207,9 +224,10 @@ namespace EntryManagement.AdminFunction
             string newAddress = AnsiConsole.Ask<string>("Nhập [green[]địa chỉ học sinh mới (bỏ trống nếu không muốn thay đổi)[/]: ", student.Address);
             if (!string.IsNullOrEmpty(newAddress)) student.Address = newAddress;
 
+
             // Nhập số điện thoại mới cho học sinh (nếu muốn thay đổi)
             string newPhoneString = AnsiConsole.Ask<string>("Nhập [green]số điện thoại học sinh mới (bỏ trống nếu không muốn thay đổi)[/]: ", student.Phone.ToString());
-            if (!string.IsNullOrEmpty(newPhoneString) && int.TryParse(newPhoneString, out int newPhone) && newPhone > 0) student.Phone = newPhone;
+         
         }
     }
 }

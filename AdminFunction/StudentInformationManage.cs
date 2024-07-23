@@ -92,11 +92,11 @@ namespace EntryManagement.AdminFunction
         public void FilterByStudentId()
         {
             AnsiConsole.Markup("Nhập [green]ID học sinh[/]: ");
-            AnsiConsole.WriteLine();
             int studentId;
+            AnsiConsole.WriteLine();
 
             // Validate ID
-            while (int.TryParse(Console.ReadLine(), out studentId) && studentId > 0)
+            while (!int.TryParse(Console.ReadLine(), out studentId) || studentId <= 0)
             {
                 AnsiConsole.Markup("[red]ID không hợp lệ[/]. Vui lòng nhập lại: ");
             }
@@ -104,7 +104,7 @@ namespace EntryManagement.AdminFunction
             try
             {
                 // Truy vấn
-                var student = context.Students
+                var students = context.Students
                     .Where(s => s.StudentId == studentId)
                     .Select(s => new
                     {
@@ -123,37 +123,40 @@ namespace EntryManagement.AdminFunction
                     .FirstOrDefault();
 
                 // Kiểm tra có dữ liệu trả về không
-                if (student != null)
+                if (students != null)
                 {
                     // Tạo bảng và thêm các cột
                     var table = new Table().Expand();
-                    table.Title("[#ffff00]Thông tin học sinh và thông tin bố mẹ");
+                    table.Title("[#ffff00]Thông tin học sinh và thông tin bố mẹ[/]");
                     table.AddColumn("Thông tin");
                     table.AddColumn("Chi tiết");
 
-                    table.AddRow("ID học sinh", $"{student.StudentId}");
-                    table.AddRow("Tên học sinh", $"{student.StudentName}");
-                    table.AddRow("Giới tính", $"{student.StudentGender}");
-                    table.AddRow("Ngày sinh", $"{student.StudentDOB:yyyy-MM-dd}");
-                    table.AddRow("Lớp", $"{student.StudentClass}");
-                    table.AddRow("Địa chỉ", $"{student.StudentAddress}");
-                    table.AddRow("Số điện thoại", $"{student.StudentPhone}");
-                    table.AddRow("Tên phụ huynh", $"{student.ParentName}");
-                    table.AddRow("Email phụ huynh", $"{student.ParentEmail}");
-                    table.AddRow("Số điện thoại phụ huynh", $"{student.ParentPhone}");
-                    table.AddRow("Địa chỉ phụ huynh", $"{student.ParentAddress}");
+                    table.AddRow("ID học sinh", $"{students.StudentId}");
+                    table.AddRow("Tên học sinh", $"{students.StudentName}");
+                    table.AddRow("Giới tính", $"{students.StudentGender}");
+                    table.AddRow("Ngày sinh", $"{students.StudentDOB:yyyy-MM-dd}");
+                    table.AddRow("Lớp", $"{students.StudentClass}");
+                    table.AddRow("Địa chỉ", $"{students.StudentAddress}");
+                    table.AddRow("Số điện thoại", $"{students.StudentPhone}");
+                    table.AddRow("Tên phụ huynh", $"{students.ParentName}");
+                    table.AddRow("Email phụ huynh", $"{students.ParentEmail}");
+                    table.AddRow("Số điện thoại phụ huynh", $"{students.ParentPhone}");
+                    table.AddRow("Địa chỉ phụ huynh", $"{students.ParentAddress}");
 
                     // Hiển thị bảng
                     AnsiConsole.Write(table);
+                    AnsiConsole.WriteLine();
                 }
                 else
                 {
                     AnsiConsole.MarkupLine($"[red]Không tìm thấy học sinh với ID {studentId} trong cơ sở dữ liệu[/].");
+                    AnsiConsole.WriteLine();
                 }
             }
             catch (Exception ex)
             {
                 AnsiConsole.MarkupLine($"[red]Lỗi khi lọc theo ID học sinh[/]: {ex.Message}");
+                AnsiConsole.WriteLine();
             }
         }
 
@@ -168,7 +171,7 @@ namespace EntryManagement.AdminFunction
 
                 // Truy vấn
                 var studentsWithReports = context.Students
-                    .Where(s => s.AbsentReports.Any(ar => ar.CreateDay >= timeStart && ar.CreateDay <= timeEnd))
+                    .Where(s => s.JoinDay >= timeStart && s.JoinDay <= timeEnd)
                     .Select(s => new
                     {
                         StudentId = s.StudentId,

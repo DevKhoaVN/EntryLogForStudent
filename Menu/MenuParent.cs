@@ -31,11 +31,10 @@ namespace EntryManagement.Menu
 
         public static int ParentEntryLog()
         {
-            AnsiConsole.Write(new Rule("[yellow]Chào mừng đến với bảng xem ra vào học sinh[/]"));
-
+           
             var choose = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
-                    .Title("Chọn một tùy chọn")
+                    .Title("Chọn một tùy chọn[[[yellow]MenuParent/thông tin học sinh ra vào[/]]]")
                     .PageSize(10)
                     .AddChoices(new[] {
                         "1. Lọc theo thời gian",
@@ -57,11 +56,11 @@ namespace EntryManagement.Menu
 
         public static int ParentAbsentReport()
         {
-            AnsiConsole.Write(new Rule("[yellow]Chào mừng đến với bảng báo cáo vắng học[/]"));
+         
 
             var choose = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
-                    .Title("Chọn một tùy chọn")
+                    .Title("Chọn một tùy chọn[[[yellow]MenuParent/báo cáo ra học sinh ra vào[/]]]")
                     .PageSize(10)
                     .AddChoices(new[] {
                         "1. Báo cáo vắng học",

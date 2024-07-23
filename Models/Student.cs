@@ -19,15 +19,15 @@ public partial class Student
 
     public string Address { get; set; } = null!;
 
-    public int? Phone { get; set; }
+    public string? Phone { get; set; }
 
-    public DateTime JoinDay{ get;  set; }
+    public DateTime JoinDay { get; set; }
 
-    public virtual ICollection<AbsentReport> AbsentReports { get; set; } = new List<AbsentReport>();
+    public virtual ICollection<AbsentReport> Absentreports { get; set; } = new List<AbsentReport>();
 
     public virtual ICollection<Alert> Alerts { get; set; } = new List<Alert>();
 
-    public virtual ICollection<EntryLog> EntryLogs { get; set; } = new List<EntryLog>();
+    public virtual ICollection<EntryLog> Entrylogs { get; set; } = new List<EntryLog>();
 
     public virtual Parent Parent { get; set; } = null!;
 }

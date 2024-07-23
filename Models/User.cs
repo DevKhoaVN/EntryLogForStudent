@@ -11,9 +11,9 @@ public partial class User
 
     public string Password { get; set; } = null!;
 
-    public int RoleId { get; set; }
-    
-    public int? StudentID { get; set; } 
+    public int? StudentId { get; set; }
 
-    public virtual UserRole Role { get; set; } = null!;
+    public int RoleId { get; set; }
+
+    public virtual Userrole Role { get; set; } = null!;
 }

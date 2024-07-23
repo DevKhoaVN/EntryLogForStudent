@@ -8,7 +8,9 @@ using EntryManagement.Menu;
 using EntryManagement.Models;
 using EntryManagement.ParentFunction;
 using EntryManagement.Service;
+using Microsoft.EntityFrameworkCore.Design;
 using Spectre.Console;
+using MySql.EntityFrameworkCore;
 namespace EntryManagement
 {
 
@@ -567,4 +569,8 @@ namespace EntryManagement
 // "Data Source=DESKTOP-Q51CKKR\\SQLEXPRESS01;Initial Catalog=EntryLogManagement;Integrated Security=True;Trust Server Certificate=True"
 
 
-// dotnet ef dbcontext scaffold -o Models -f -d "Data Source=DESKTOP-Q51CKKR\SQLEXPRESS01;Initial Catalog=EntryLogManagement;Integrated Security=True;Trust Server Certificate=True" "Microsoft.EntityFrameworkCore.SqlServer"
+// dotnet ef dbcontext scaffold -o Models -f -d "Data Source==DESKTOP-Q51CKKR\SQLEXPRESS01;Initial Catalog=EntryLogManagement;Integrated Security=True;Trust Server Certificate=True" "Microsoft.EntityFrameworkCore.SqlServer"
+
+
+//= string connectionString = "Server=localhost;Database=entrylogmanagement;User ID=root;Password=Vakhoa205!";
+//dotnet ef dbcontext scaffold "Server=localhost;Database=entrylogmanagement;User ID=root;Password=Vakhoa205!" MySql.EntityFrameworkCore -o Models -fcd
