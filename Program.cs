@@ -365,22 +365,21 @@ namespace EntryManagement
                                                             {
                                                                 switch (MenuAdmin.AdminEntryLogManagement2_2())
                                                                 {
-                                                                    // Học theo id học sinh
+                                                                    // Học theo đi muộn trong ngày
                                                                     case 1:
+                                                                        entryLaterManage.FilterStudentLater();
+                                                                        break;                                                                        
+
+                                                                    // Lọc theo ID học sinh
+                                                                    case 2:
+
                                                                         entryLaterManage.FilterByStudentId();
                                                                         break;
 
-                                                                    // Lọc theo thời gian
-                                                                    case 2:
-
-                                                                        entryLaterManage.FilterByRangeTime();
-                                                                        break;
-
-                                                                    // Hiển thị tất cả
+                                                                    // Hiển thị theo thời gian
                                                                     case 3:
 
-                                                                        entryLaterManage.FilterStudentLater();
-                                                                       
+                                                                        entryLaterManage.FilterByRangeTime();
                                                                         break;
 
                                                                     // Quay lại trang trước đó

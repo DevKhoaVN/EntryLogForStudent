@@ -9,17 +9,17 @@ public partial class Student
 
     public int ParentId { get; set; }
 
-    public string Name { get; set; } = null!;
+    public string Name { get; set; } 
 
     public string? Gender { get; set; }
 
     public DateTime DayOfBirth { get; set; }
 
-    public string Class { get; set; } = null!;
+    public string Class { get; set; } 
 
-    public string Address { get; set; } = null!;
+    public string Address { get; set; } 
 
-    public string? Phone { get; set; }
+    public int Phone { get; set; }
 
     public DateTime JoinDay { get; set; }
 

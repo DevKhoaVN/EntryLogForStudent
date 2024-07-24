@@ -1,6 +1,5 @@
 using System;
 using System.Globalization;
-using System.Text.RegularExpressions;
 using EntryManagement.Models; // Import các namespace cần thiết
 using Spectre.Console;
 
@@ -24,16 +23,8 @@ namespace EntryManagement.AdminFunction
 
             // Nhập số điện thoại từ người dùng và validate nó phải lớn hơn 0
             parent.Phone = AnsiConsole.Prompt(
-               new TextPrompt<string>("Nhập [green]số điện thoại học sinh[/]: ")
-          .Validate(phone =>
-          {
-              // Define a regex pattern for validating phone numbers
-              string pattern = @"^[1-9]\d{8,12}$"; // Adjust the pattern as needed
-              return Regex.IsMatch(phone, pattern) ?
-                  ValidationResult.Success() :
-                  ValidationResult.Error("[red]Số điện thoại không hợp lệ. Vui lòng nhập lại.[/]");
-          }));
-
+                new TextPrompt<int>("Nhập [green]số điện thoại phụ huynh[/]: ")
+                    .Validate(phone => phone > 0 ? ValidationResult.Success() : ValidationResult.Error("[red]Số điện thoại không hợp lệ[/].")));
 
             // Nhập Email từ người dùng và validate là phải kết thúc bằng @gmail.com
             parent.Email = AnsiConsole.Prompt(
@@ -58,28 +49,20 @@ namespace EntryManagement.AdminFunction
 
             // Nhập ngày sinh từ người dùng và validate định dạng dd/MM/yyyy
             student.DayOfBirth = AnsiConsole.Prompt(
-                new TextPrompt<DateTime>("Nhập ngày sinh học sinh (dd/MM/yyyy): ")
+                new TextPrompt<DateTime>("Nhập ngày sinh học sinh (yyyy/MM/dd): ")
                     .PromptStyle("green")
-                    .Validate(dob => DateTime.TryParseExact(dob.ToString("dd/MM/yyyy"), "dd/MM/yyyy", null, DateTimeStyles.None, out _)
+                    .Validate(dob => DateTime.TryParseExact(dob.ToString("yyyy/MM/dd"), "yyyy/MM/dd", null, DateTimeStyles.None, out _)
                         ? ValidationResult.Success()
-                        : ValidationResult.Error("[red]Ngày sinh không hợp lệ. Vui lòng nhập lại (dd/MM/yyyy)[/].")));
+                        : ValidationResult.Error("[red]Ngày sinh không hợp lệ. Vui lòng nhập lại (yyyy/MM/dd)[/].")));
 
             student.Class = AnsiConsole.Ask<string>("Nhập[green] lớp học sinh[/]: "); // Nhập lớp học từ người dùng
 
             student.Address = AnsiConsole.Ask<string>("[green]Nhập địa chỉ học sinh[/]: "); // Nhập địa chỉ từ người dùng
 
             // Nhập số điện thoại từ người dùng và validate nó phải lớn hơn 0
-            student.Phone = AnsiConsole.Prompt(
+           /* student.Phone = AnsiConsole.Prompt(
                 new TextPrompt<string>("Nhập [green]số điện thoại học sinh[/]: ")
-                    .Validate(phone =>
-                    {
-                        // Define a regex pattern for validating phone numbers
-                        string pattern = @"^[1-9]\d{8,12}$"; // Adjust the pattern as needed
-                        return Regex.IsMatch(phone, pattern) ?
-                            ValidationResult.Success() :
-                            ValidationResult.Error("[red]Số điện thoại không hợp lệ[/]");
-                    }));
-
+                    .Validate(phone => phone > 0 ? ValidationResult.Success() : ValidationResult.Error("[red]Số điện thoại không hợp lệ[/].")));*/
 
             return student; // Trả về đối tượng Student đã nhập
         }
@@ -148,7 +131,7 @@ namespace EntryManagement.AdminFunction
         public void UpdateStudent()
         {
             int id = AnsiConsole.Prompt(
-                new TextPrompt<int>("Nhập ID học sinh muốn chỉnh sửa: ")
+                new TextPrompt<int>("Nhập [green]ID học sinh muốn chỉnh sửa :[/] ")
                     .Validate(id => id > 0 ? ValidationResult.Success() : ValidationResult.Error("ID không hợp lệ. Vui lòng nhập lại.")));
 
             try
@@ -159,10 +142,12 @@ namespace EntryManagement.AdminFunction
                     var parent = context.Parents.Find(student.ParentId); // Tìm phụ huynh tương ứng
                     if (parent != null)
                     {
-                        UpdateParent(parent); // Gọi phương thức cập nhật thông tin phụ huynh
+                       // Gọi phương thức cập nhật thông tin phụ huynh
+                        context.Parents.Update( UpdateParent(parent));
+                        context.SaveChanges();
                     }
 
-                    UpdateStudentInfo(student); // Gọi phương thức cập nhật thông tin học sinh
+                    context.Students.Update(UpdateStudentInfo(student)); // Gọi phương thức cập nhật thông tin học sinh
 
                     context.SaveChanges(); // Lưu thay đổi vào cơ sở dữ liệu
                     AnsiConsole.MarkupLine("[#00ff00]Đã cập nhật thông tin học sinh thành công.[/]"); // Thông báo thành công
@@ -182,7 +167,7 @@ namespace EntryManagement.AdminFunction
         }
 
         // Phương thức cập nhật thông tin phụ huynh
-        private void UpdateParent(Parent parent)
+        private Parent UpdateParent(Parent parent)
         {
             // Nhập tên mới cho phụ huynh (nếu muốn thay đổi)
             string newName = AnsiConsole.Ask<string>("Nhập [green]tên phụ huynh mới (bỏ trống nếu không muốn thay đổi)[/]: ", parent.Name);
@@ -190,7 +175,7 @@ namespace EntryManagement.AdminFunction
 
             // Nhập số điện thoại mới cho phụ huynh (nếu muốn thay đổi)
             string newPhoneString = AnsiConsole.Ask<string>("Nhập [green]số điện thoại phụ huynh mới (bỏ trống nếu không muốn thay đổi)[/]: ", parent.Phone.ToString());
-          
+            if (!string.IsNullOrEmpty(newPhoneString) && int.TryParse(newPhoneString, out int newPhone) && newPhone > 0) parent.Phone = newPhone;
 
             // Nhập Email mới cho phụ huynh (nếu muốn thay đổi)
             string newEmail = AnsiConsole.Ask<string>("Nhập[green] Email phụ huynh mới (bỏ trống nếu không muốn thay đổi, phải là @gmail.com)[/]: ", parent.Email);
@@ -199,10 +184,12 @@ namespace EntryManagement.AdminFunction
             // Nhập địa chỉ mới cho phụ huynh (nếu muốn thay đổi)
             string newAddress = AnsiConsole.Ask<string>("Nhập [green]địa chỉ phụ huynh mới (bỏ trống nếu không muốn thay đổi)[/]: ", parent.Address);
             if (!string.IsNullOrEmpty(newAddress)) parent.Address = newAddress;
+
+             return parent;
         }
 
         // Phương thức cập nhật thông tin học sinh
-        private void UpdateStudentInfo(Student student)
+        private Student  UpdateStudentInfo(Student student)
         {
             // Nhập tên mới cho học sinh (nếu muốn thay đổi)
             string newName = AnsiConsole.Ask<string>("Nhập [green]tên học sinh mới (bỏ trống nếu không muốn thay đổi)[/]: ", student.Name);
@@ -213,21 +200,22 @@ namespace EntryManagement.AdminFunction
             if (!string.IsNullOrEmpty(newGender)) student.Gender = newGender;
 
             // Nhập ngày sinh mới cho học sinh (nếu muốn thay đổi)
-            string newDobString = AnsiConsole.Ask<string>("Nhập [green]ngày sinh học sinh mới (dd/MM/yyyy, bỏ trống nếu không muốn thay đổi)[/]: ", student.DayOfBirth.ToString("dd/MM/yyyy"));
-            if (!string.IsNullOrEmpty(newDobString) && DateTime.TryParseExact(newDobString, "dd/MM/yyyy", null, DateTimeStyles.None, out DateTime newDob)) student.DayOfBirth = newDob;
+            string newDobString = AnsiConsole.Ask<string>("Nhập [green]ngày sinh học sinh mới (yyyy/MM/dd, bỏ trống nếu không muốn thay đổi)[/]: ", student.DayOfBirth.ToString("yyyy/MM/dd"));
+            if (!string.IsNullOrEmpty(newDobString) && DateTime.TryParseExact(newDobString, "yyyy/MM/dd" , null, DateTimeStyles.None, out DateTime newDob)) student.DayOfBirth = newDob;
 
             // Nhập lớp mới cho học sinh (nếu muốn thay đổi)
             string newClass = AnsiConsole.Ask<string>("Nhập [green]lớp học sinh mới (bỏ trống nếu không muốn thay đổi)[/]: ", student.Class);
             if (!string.IsNullOrEmpty(newClass)) student.Class = newClass;
 
             // Nhập địa chỉ mới cho học sinh (nếu muốn thay đổi)
-            string newAddress = AnsiConsole.Ask<string>("Nhập [green[]địa chỉ học sinh mới (bỏ trống nếu không muốn thay đổi)[/]: ", student.Address);
+            string newAddress = AnsiConsole.Ask<string>("Nhập [green] địa chỉ học sinh mới (bỏ trống nếu không muốn thay đổi)[/]: ", student.Address);
             if (!string.IsNullOrEmpty(newAddress)) student.Address = newAddress;
-
 
             // Nhập số điện thoại mới cho học sinh (nếu muốn thay đổi)
             string newPhoneString = AnsiConsole.Ask<string>("Nhập [green]số điện thoại học sinh mới (bỏ trống nếu không muốn thay đổi)[/]: ", student.Phone.ToString());
-         
+            if (!string.IsNullOrEmpty(newPhoneString) && int.TryParse(newPhoneString, out int newPhone) && newPhone > 0) student.Phone = newPhone;
+
+            return  student;
         }
     }
 }
