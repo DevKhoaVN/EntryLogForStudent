@@ -8,7 +8,9 @@ using EntryManagement.Menu;
 using EntryManagement.Models;
 using EntryManagement.ParentFunction;
 using EntryManagement.Service;
+using Microsoft.EntityFrameworkCore.Design;
 using Spectre.Console;
+using MySql.EntityFrameworkCore;
 namespace EntryManagement
 {
 
@@ -363,22 +365,21 @@ namespace EntryManagement
                                                             {
                                                                 switch (MenuAdmin.AdminEntryLogManagement2_2())
                                                                 {
-                                                                    // Học theo id học sinh
+                                                                    // Học theo đi muộn trong ngày
                                                                     case 1:
+                                                                        entryLaterManage.FilterStudentLater();
+                                                                        break;                                                                        
+
+                                                                    // Lọc theo ID học sinh
+                                                                    case 2:
+
                                                                         entryLaterManage.FilterByStudentId();
                                                                         break;
 
-                                                                    // Lọc theo thời gian
-                                                                    case 2:
-
-                                                                        entryLaterManage.FilterByRangeTime();
-                                                                        break;
-
-                                                                    // Hiển thị tất cả
+                                                                    // Hiển thị theo thời gian
                                                                     case 3:
 
-                                                                        entryLaterManage.FilterStudentLater();
-                                                                       
+                                                                        entryLaterManage.FilterByRangeTime();
                                                                         break;
 
                                                                     // Quay lại trang trước đó
@@ -567,4 +568,8 @@ namespace EntryManagement
 // "Data Source=DESKTOP-Q51CKKR\\SQLEXPRESS01;Initial Catalog=EntryLogManagement;Integrated Security=True;Trust Server Certificate=True"
 
 
-// dotnet ef dbcontext scaffold -o Models -f -d "Data Source=DESKTOP-Q51CKKR\SQLEXPRESS01;Initial Catalog=EntryLogManagement;Integrated Security=True;Trust Server Certificate=True" "Microsoft.EntityFrameworkCore.SqlServer"
+// dotnet ef dbcontext scaffold -o Models -f -d "Data Source==DESKTOP-Q51CKKR\SQLEXPRESS01;Initial Catalog=EntryLogManagement;Integrated Security=True;Trust Server Certificate=True" "Microsoft.EntityFrameworkCore.SqlServer"
+
+
+//= string connectionString = "Server=localhost;Database=entrylogmanagement;User ID=root;Password=Vakhoa205!";
+//dotnet ef dbcontext scaffold "Server=localhost;Database=entrylogmanagement;User ID=root;Password=Vakhoa205!" MySql.EntityFrameworkCore -o Models -fcd

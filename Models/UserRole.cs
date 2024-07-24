@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace EntryManagement.Models;
 
-public partial class UserRole
+public partial class Userrole
 {
     public int RoleId { get; set; }
 

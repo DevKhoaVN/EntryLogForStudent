@@ -14,80 +14,94 @@ namespace EntryManagement.AdminFunction
         private DateTime morningLateTime;
         private DateTime afternoonStartTime;
         private DateTime afternoonLateTime;
-        // Xác định thời gian bắt đầu của buổi sáng và buổi chiều
 
+        // Xác định thời gian bắt đầu của buổi sáng và buổi chiều
         public EntryLaterManage(EntryLogManagementContext _context)
         {
             context = _context;
 
-            DateTime morningStartTime = new DateTime(today.Year, today.Month, today.Day, 20, 0, 0);
-            DateTime morningLateTime = morningStartTime.AddMinutes(59); // 7:30 AM
+            // Correctly assign to class-level fields
+            morningStartTime = new DateTime(today.Year, today.Month, today.Day, 7, 0, 0); // 7:00 AM
+            morningLateTime = new DateTime(today.Year, today.Month, today.Day, 7, 30, 0); // 7:30 AM
 
-            DateTime afternoonStartTime = new DateTime(today.Year, today.Month, today.Day, 14, 0, 0);
-            DateTime afternoonLateTime = afternoonStartTime.AddMinutes(30); // 2:30 PM
-
-
+            afternoonStartTime = new DateTime(today.Year, today.Month, today.Day, 19, 0, 0); // 2:00 PM
+            afternoonLateTime = new DateTime(today.Year, today.Month, today.Day, 19, 59, 0); // 2:30 PM
         }
 
-        // 1.hiển thị thời gian đi muộn của học sinh trong ngày
-        // 2. hiển thị theo id của học sinh
-        // 3. hiển thị theo giai đoạn nhận 2 time
-
-
-        // 1.hiển thị thời gian đi muộn của học sinh trong ngày
+        // 1. hiển thị thời gian đi muộn của học sinh trong ngày
         public void FilterStudentLater()
-        {             
-            // Lọc các bản ghi học sinh đi muộn
-            var studentLate = context.EntryLogs.Where(e =>
-                (e.LogTime > morningStartTime && e.LogTime <= morningLateTime) ||
-                (e.LogTime > afternoonStartTime && e.LogTime <= afternoonLateTime)
-            ).Select(e => new {
-                ID = e.StudentId,
-                Name = e.Student.Name,
-                Class = e.Student.Class,
-                Status = e.Status,
-                TimeLate = e.LogTime
-            
-            }).ToList();
-
-
-            // Tạo bảng
-            var table = new Table();
-            table.Border = TableBorder.Rounded;
-            table.AddColumn("ID");
-            table.AddColumn("Học sinh");
-            table.AddColumn("Lớp");
-            table.AddColumn("Trạng thái");
-            table.AddColumn("Thời gian");
-
-            if(studentLate!= null)
-
-            // Thêm dữ liệu vào bảng
-            foreach (var student in studentLate)
+        {
+            try
             {
-                table.AddRow(student.ID.ToString(), student.Name, student.Class, student.TimeLate.ToString("yyyy-MM-dd HH:mm:ss"));
+                // Lọc các bản ghi học sinh đi muộn
+                var studentLate = context.EntryLogs.Where(e =>
+                    (e.LogTime > morningStartTime && e.LogTime <= morningLateTime) ||
+                    (e.LogTime > afternoonStartTime && e.LogTime <= afternoonLateTime)
+                ).Select(e => new {
+                    ID = e.StudentId,
+                    Name = e.Student.Name,
+                    Class = e.Student.Class,
+                    Status = e.Status,
+                    TimeLate = e.LogTime
+                }).ToList();
+
+                // Tạo bảng
+                var table = new Table();
+                table.Border = TableBorder.Rounded;
+                table.AddColumn("ID");
+                table.AddColumn("Học sinh");
+                table.AddColumn("Lớp");
+                table.AddColumn("Trạng thái");
+                table.AddColumn("Thời gian");
+
+                if (studentLate != null && studentLate.Count > 0) // Ensure list is not empty
+                {
+                    // Thêm dữ liệu vào bảng
+                    foreach (var student in studentLate)
+                    {
+                        table.AddRow(
+                           $"{student.ID}",
+                           $"{student.Name}",
+                           $"{student.Class}",
+                           $"{student.Status}",
+                           $"{student.TimeLate}" // Format the time display
+                       );
+                    }
+
+                    // Hiển thị bảng
+                    AnsiConsole.Render(table);
+                    AnsiConsole.WriteLine();
+                }
+                else
+                {
+                    AnsiConsole.Markup("[Red]Không có dữ liệu trên hệ thống ![/]");
+                    AnsiConsole.WriteLine();
+                }
             }
-
-            // Hiển thị bảng
-            AnsiConsole.Write(table);
-
+            catch (Exception ex)
+            {
+                AnsiConsole.Markup("[red] Lỗi dữ liệu : " + ex.Message + "[/]");
+                AnsiConsole.WriteLine();
+            }
         }
         public void FilterByStudentId()
         {
-            Console.WriteLine("Nhập vào ID của học sinh:");
+            AnsiConsole.Markup("Nhập[green] ID của học sinh:[/] ");
+            Console.WriteLine();
             int id;
 
             while (!int.TryParse(Console.ReadLine(), out id))
             {
-                Console.WriteLine("ID không đúng định dạng!");
-                Console.Write("Nhập lại ID học sinh: ");
+                AnsiConsole.MarkupLine("[red]ID không đúng định dạng![/]");
+                AnsiConsole.Markup("Nhập lại [green]ID học sinh[/]: ");
             }
+
 
             try
             {
                 var studentLog = context.EntryLogs.Where(e =>
-                       ((e.LogTime > morningStartTime && e.LogTime <= morningLateTime) ||
-                       (e.LogTime > afternoonStartTime && e.LogTime <= afternoonLateTime) & e.StudentId == id)
+                       (((e.LogTime > morningStartTime && e.LogTime <= morningLateTime) ||
+                       (e.LogTime > afternoonStartTime && e.LogTime <= afternoonLateTime)) & e.StudentId == id)
                    ).Select(e => new
                    {
                        ID = e.StudentId,
@@ -116,58 +130,69 @@ namespace EntryManagement.AdminFunction
                                  );
 
                     AnsiConsole.Render(table);
+                    AnsiConsole.WriteLine();
                 }
                 else
                 {
-                    Console.WriteLine("Không tìm thấy bản ghi nào cho ID học sinh này.");
+                    AnsiConsole.Markup("[red]Không tìm thấy bản ghi nào cho ID học sinh này.[/]");
+                    AnsiConsole.WriteLine();
                 }
             }catch(Exception ex)
             {
                 AnsiConsole.WriteLine("[red]Lỗi khi lọc dữ liệu theo id[/] :" + ex.InnerException.Message);
+                AnsiConsole.WriteLine();
             }
          
         }
+
 
         public void FilterByRangeTime()
         {
             try
             {
-                // Prompt user for start and end time
-                Console.WriteLine("Nhập thời gian bắt đầu (yyyy-MM-dd HH:mm:ss): ");
-                DateTime startTime;
-                while (!DateTime.TryParseExact(Console.ReadLine(), "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out startTime))
+                // Khởi tạo biến ngày bắt đầu và ngày kết thúc
+                DateTime startDate, endDate;
+
+                // Nhập ngày bắt đầu
+                AnsiConsole.Markup("Nhập [green]ngày bắt đầu (yyyy/MM/dd)[/]: ");
+                while (!DateTime.TryParseExact(Console.ReadLine(), "yyyy/MM/dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out startDate))
                 {
-                    Console.WriteLine("Thời gian không hợp lệ. Vui lòng nhập lại: ");
+                    AnsiConsole.MarkupLine("[red]Ngày không hợp lệ.[/] Vui lòng nhập lại (yyyy/MM/dd): ");
+                    AnsiConsole.Markup("Nhập [green]ngày bắt đầu (yyyy/MM/dd)[/]: ");
                 }
 
-                Console.WriteLine("Nhập thời gian kết thúc (yyyy-MM-dd HH:mm:ss): ");
-                DateTime endTime;
-                while (!DateTime.TryParseExact(Console.ReadLine(), "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out endTime))
+                // Nhập ngày kết thúc
+                AnsiConsole.Markup("Nhập [green]ngày kết thúc (yyyy/MM/dd)[/]: ");
+                while (!DateTime.TryParseExact(Console.ReadLine(), "yyyy/MM/dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out endDate))
                 {
-                    Console.WriteLine("Thời gian không hợp lệ. Vui lòng nhập lại: ");
+                    AnsiConsole.MarkupLine("[red]Ngày không hợp lệ.[/] Vui lòng nhập lại (yyyy/MM/dd): ");
+                    AnsiConsole.Markup("Nhập [green]ngày kết thúc (yyyy/MM/dd)[/]: ");
                 }
 
-                // Query logs within the specified time range and time of day
+                // Thêm 1 ngày vào ngày kết thúc để bao gồm cả ngày đó
+                endDate = endDate.AddDays(1).AddTicks(-1);
+
+                // Truy vấn bản ghi học sinh đi muộn trong khoảng thời gian xác định
                 var studentLate = context.EntryLogs
-                                  .Where(e => (e.LogTime >= startTime && e.LogTime <= endTime) &&
-                                              ((e.LogTime.TimeOfDay > morningStartTime.TimeOfDay && e.LogTime.TimeOfDay <= morningLateTime.TimeOfDay) ||
-                                               (e.LogTime.TimeOfDay > afternoonStartTime.TimeOfDay && e.LogTime.TimeOfDay <= afternoonLateTime.TimeOfDay)))
-                                  .OrderByDescending(e => e.LogTime)
-                                  .Select(e => new
-                                  {
-                                      ID = e.StudentId,
-                                      Name = e.Student.Name,
-                                      Class = e.Student.Class,
-                                      TimeLate = e.LogTime,
-                                      Status = e.Status
-                                  })
-                                  .ToList();
+                    .Where(e => (e.LogTime >= startDate && e.LogTime <= endDate) &&
+                                ((e.LogTime.TimeOfDay > morningStartTime.TimeOfDay && e.LogTime.TimeOfDay <= morningLateTime.TimeOfDay) ||
+                                 (e.LogTime.TimeOfDay > afternoonStartTime.TimeOfDay && e.LogTime.TimeOfDay <= afternoonLateTime.TimeOfDay)))
+                    .OrderByDescending(e => e.LogTime)
+                    .Select(e => new
+                    {
+                        ID = e.StudentId,
+                        Name = e.Student.Name,
+                        Class = e.Student.Class,
+                        TimeLate = e.LogTime,
+                        Status = e.Status
+                    })
+                    .ToList();
 
-                // Display results in a table
-                if (studentLate != null)
+                // Kiểm tra và hiển thị kết quả trong bảng
+                if (studentLate.Any())
                 {
                     var table = new Table().Expand();
-                    table.Title($"Các bản ghi từ {startTime:yyyy-MM-dd HH:mm:ss} đến {endTime:yyyy-MM-dd HH:mm:ss} và trong khoảng giờ quy định");
+                    table.Title($"Các bản ghi từ {startDate:yyyy/MM/dd} đến {endDate:yyyy/MM/dd} và trong khoảng giờ quy định");
                     table.AddColumn("ID");
                     table.AddColumn("Học sinh");
                     table.AddColumn("Lớp");
@@ -176,28 +201,30 @@ namespace EntryManagement.AdminFunction
 
                     foreach (var studentLog in studentLate)
                     {
-                        table.AddRow($"{studentLog.ID}",
-                           $"{studentLog.Name}",
-                           $"{studentLog.Class}",
-                           $"{studentLog.Status}",
-                           $"{studentLog.TimeLate}");
-                          
+                        table.AddRow(
+                            $"{studentLog.ID}",
+                            $"{studentLog.Name}",
+                            $"{studentLog.Class}",
+                            $"{studentLog.TimeLate:yyyy-MM-dd HH:mm:ss}",
+                            $"{studentLog.Status}"
+                        );
                     }
 
                     AnsiConsole.Render(table);
+                    AnsiConsole.WriteLine();
                 }
                 else
                 {
-                    Console.WriteLine($"Không có bản ghi nào trong khoảng thời gian từ {startTime:yyyy-MM-dd HH:mm:ss} đến {endTime:yyyy-MM-dd HH:mm:ss} và trong khoảng giờ quy định.");
+                    AnsiConsole.MarkupLine($"[red]Không có bản ghi nào trong khoảng thời gian từ {startDate:yyyy/MM/dd} đến {endDate:yyyy/MM/dd} và trong khoảng giờ quy định.[/]");
+                    AnsiConsole.WriteLine();
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Lỗi khi lọc theo khoảng thời gian và giờ: {ex.Message}");
+                AnsiConsole.MarkupLine($"[red]Lỗi khi lọc theo khoảng thời gian và giờ:[/] {ex.Message}");
+                AnsiConsole.WriteLine();
             }
         }
-
-
 
     }
 }

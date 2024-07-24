@@ -87,10 +87,12 @@ namespace EntryManagement.AdminFunction
             int id;
 
             // Validate ID phải là số nguyên và lớn hơn hoặc bằng 0
-            while (!int.TryParse(Console.ReadLine(), out id) || id < 0)
+            while (!int.TryParse(Console.ReadLine(), out id))
             {
-                Console.Write("ID không hợp lệ. Vui lòng nhập lại: ");
+                AnsiConsole.MarkupLine("[red]ID không đúng định dạng![/]");
+                AnsiConsole.Markup("Nhập lại [green]ID học sinh[/]: ");
             }
+
 
 
             try

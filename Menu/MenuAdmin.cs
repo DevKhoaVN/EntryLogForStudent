@@ -234,31 +234,29 @@ namespace EntryManagement.Menu
 
         public static int AdminEntryLogManagement2_2()
         {
-
-
             var choose = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                     .Title("Chọn một tùy chọn[[[yellow]Quản lí Admin/Quản lí ra vào/Báo cáo đi muộn[/]]]")
                     .PageSize(10)
                     .AddChoices(new[] {
-                        "1. Hiển thị học sinh đi muộn trong ngày",
-                        "2. Hiển thị theo id học sinh",
-                        "3. Hiển thị theo thời gian",
-                        "0. Quay về trang trước đó"
+                "1. Hiển thị học sinh đi muộn trong ngày",
+                "2. Hiển thị theo id học sinh",
+                "3. Hiển thị theo thời gian",
+                "0. Quay về trang trước đó"
                     }));
-
 
             int choice = choose switch
             {
-                "1. Lọc theo id học sinh" => 1,
-                "2. Lọc theo thời gian" => 2,
-                "3. Hiển thị tất cả" => 3,
+                "1. Hiển thị học sinh đi muộn trong ngày" => 1,
+                "2. Hiển thị theo id học sinh" => 2,
+                "3. Hiển thị theo thời gian" => 3,
                 "0. Quay về trang trước đó" => 0,
                 _ => 0
             };
 
             return choice;
         }
+
 
 
         // Menu admin -> bảng ra vào
